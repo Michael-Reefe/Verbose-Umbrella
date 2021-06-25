@@ -5,14 +5,14 @@ import numpy as np
 class AbstractWave(ABC):
 
     @abstractmethod
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         self.amplitude = amplitude
         self.period = period
         self.phase = phase
         self.velocity = velocity
 
     @abstractmethod
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         pass
 
     @abstractmethod
@@ -22,10 +22,10 @@ class AbstractWave(ABC):
 
 class Sine(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         return self.amplitude * np.sin(2*np.pi*(xi - self.velocity*ti)/self.period - self.phase)
 
     def __repr__(self):
@@ -34,10 +34,10 @@ class Sine(AbstractWave):
 
 class Cosine(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         return self.amplitude * np.cos(2 * np.pi * (xi - self.velocity*ti)/ self.period - self.phase)
 
     def __repr__(self):
@@ -46,10 +46,10 @@ class Cosine(AbstractWave):
 
 class Square(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period / 2)
         return self.amplitude if factor % 2 == 0 else -self.amplitude
 
@@ -59,10 +59,10 @@ class Square(AbstractWave):
 
 class SquareRect(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period/2)
         return self.amplitude if factor % 2 == 0 else 0
 
@@ -72,10 +72,10 @@ class SquareRect(AbstractWave):
 
 class Triangle(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period / 4)
         return -self.amplitude * (2*((xi - self.velocity*ti) - self.phase) - self.period/2 - 2*(self.period/4)*factor) if factor % 4 == 1 else \
             -self.amplitude * (2*((xi - self.velocity*ti) - self.phase) - 2*(self.period/4)*factor) if factor % 4 == 2 else \
@@ -88,10 +88,10 @@ class Triangle(AbstractWave):
 
 class TriangleRect(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period / 4)
         return -self.amplitude * (2 * ((xi - self.velocity*ti) - self.phase) - self.period / 2 - 2 * (self.period / 4) * factor) if factor % 4 == 1 else \
             0 if (factor % 4 == 2) or (factor % 4 == 3) else \
@@ -103,10 +103,10 @@ class TriangleRect(AbstractWave):
 
 class Sawtooth(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period/2)
         return self.amplitude * ((xi - self.velocity*ti) - self.phase - (self.period/2)*factor) if factor % 2 == 0 else \
             -self.amplitude * (-(xi - self.velocity*ti) + self.phase + (self.period/2)*factor)
@@ -117,10 +117,10 @@ class Sawtooth(AbstractWave):
 
 class SawtoothRect(AbstractWave):
 
-    def __init__(self, amplitude, period, phase, velocity):
+    def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period/2)
         return self.amplitude * ((xi - self.velocity*ti) - self.phase - (self.period/2)*factor) if factor % 2 == 0 else 0
 
@@ -130,12 +130,12 @@ class SawtoothRect(AbstractWave):
 
 class Gaussian(AbstractWave):
 
-    def __init__(self, amplitude, fwhm, mean, velocity):
+    def __init__(self, amplitude=1, fwhm=1, mean=0, velocity=0):
         super().__init__(amplitude, fwhm, mean, velocity)
         self.fwhm = fwhm
         self.mean = mean
 
-    def function(self, xi, ti):
+    def eval(self, xi, ti=0):
         return self.amplitude*np.exp(-(xi - self.mean - self.velocity*ti)**2/(2*self.fwhm**2))
 
     def __repr__(self):
