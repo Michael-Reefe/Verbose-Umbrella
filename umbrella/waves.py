@@ -24,6 +24,7 @@ class Sine(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'sine'
 
     def eval(self, xi, ti=0):
         return self.amplitude * np.sin(2*np.pi*(xi - self.velocity*ti)/self.period - self.phase)
@@ -36,6 +37,7 @@ class Cosine(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'cosine'
 
     def eval(self, xi, ti=0):
         return self.amplitude * np.cos(2 * np.pi * (xi - self.velocity*ti)/ self.period - self.phase)
@@ -48,6 +50,7 @@ class Square(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'square'
 
     def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period / 2)
@@ -61,6 +64,7 @@ class SquareRect(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'rectified square'
 
     def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period/2)
@@ -74,6 +78,7 @@ class Triangle(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'triangle'
 
     def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period / 4)
@@ -90,6 +95,7 @@ class TriangleRect(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'rectified triangle'
 
     def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period / 4)
@@ -105,6 +111,7 @@ class Sawtooth(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'sawtooth'
 
     def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period/2)
@@ -119,6 +126,7 @@ class SawtoothRect(AbstractWave):
 
     def __init__(self, amplitude=1, period=2*np.pi, phase=0, velocity=0):
         super().__init__(amplitude, period, phase, velocity)
+        self.name = 'rectified sawtooth'
 
     def eval(self, xi, ti=0):
         factor = ((xi - self.velocity*ti) - self.phase) // (self.period/2)
@@ -134,6 +142,7 @@ class Gaussian(AbstractWave):
         super().__init__(amplitude, fwhm, mean, velocity)
         self.fwhm = fwhm
         self.mean = mean
+        self.name = 'gaussian'
 
     def eval(self, xi, ti=0):
         return self.amplitude*np.exp(-(xi - self.mean - self.velocity*ti)**2/(2*self.fwhm**2))

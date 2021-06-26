@@ -15,7 +15,7 @@ def build_fourier(type, rectify, amp, period, phase, velocity,
         type += 'Rect'
     function = eval(f'w.{type}({amp}, {period}, {phase}, {velocity})')
     fs = FourierSeries(function)
-    pchart = fs.run(timestamp, iterations, interval, resolution)
+    _, _, _, _, pchart = fs.integrate(timestamp, iterations, interval, resolution)
     return pchart
 
 
