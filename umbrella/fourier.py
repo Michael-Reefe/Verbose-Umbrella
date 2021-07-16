@@ -51,7 +51,7 @@ class FourierSeries:
         fig = psp.make_subplots(rows=1, cols=1)
         self._append_plot(fig, x, y, 'Function')
         coefficients = np.zeros((2, iterations))
-        generator = self._find_coefficients()
+        generator = self.find_coefficients(self.wave_class.period, self.wave_class.eval)
         summation = np.zeros((len(x)))
         if return_cumsum:
             cumsum = np.zeros((len(x), iterations))
@@ -79,7 +79,7 @@ class FourierSeries:
         if return_cumsum:
             cumsum = np.zeros((len(x), iterations), dtype=complex)
         coefficients = np.zeros((iterations,), dtype=complex)
-        generator = self._find_coefficients_complex()
+        generator = self.find_coefficients_complex(self.wave_class.period, self.wave_class.eval)
         for i in range(iterations):
             cR, cI = next(generator)
             cn = cR + complex('j')*cI
@@ -98,14 +98,15 @@ class FourierSeries:
         else:
             return x, y, coefficients, summation, anim
 
-
-    def _find_coefficients(self):
+    @staticmethod
+    def find_coefficients(period, function):
         """
         A generator function for determining fourier coefficients using scipy.integrate.quad
 
         :return: an, bn
         """
-        per = self.wave_class.period
+        # Alias
+        per = period
 
         def an(p, n, fun):
             return fun(p)*np.cos(2*np.pi*n*p/per)
@@ -115,32 +116,27 @@ class FourierSeries:
 
         n = 0
         while True:
-            a = (2/per)*spint.quad(an, -per/2, per/2, args=(n, self.wave_class.eval,))[0]
-            b = (2/per)*spint.quad(bn, -per/2, per/2, args=(n, self.wave_class.eval,))[0]
+            a = (2/per)*spint.quad(an, -per/2, per/2, args=(n, function,))[0]
+            b = (2/per)*spint.quad(bn, -per/2, per/2, args=(n, function,))[0]
             yield a, b
             n += 1
 
-    def _find_coefficients_complex(self):
-        per = self.wave_class.period
+    @staticmethod
+    def find_coefficients_complex(period, function):
+        per = period
 
         def an(p, n, fun, r):
-            if r:
-                return fun(p)[0]*np.cos(2*np.pi*n*p/per)
-            else:
-                return fun(p)[1]*np.cos(2*np.pi*n*p/per)
+            return fun(p)[r]*np.cos(2*np.pi*n*p/per)
 
         def bn(p, n, fun, r):
-            if r:
-                return fun(p)[0]*np.sin(2*np.pi*n*p/per)
-            else:
-                return fun(p)[1]*np.sin(2*np.pi*n*p/per)
+            return fun(p)[r]*np.sin(2*np.pi*n*p/per)
 
         n = 0
         while True:
-            aR = (2/per)*spint.quad(an, -per/2, per/2, args=(n, self.wave_class.eval, 1))[0]
-            aI = (2/per)*spint.quad(an, -per/2, per/2, args=(n, self.wave_class.eval, 0))[0]
-            bR = (2/per)*spint.quad(bn, -per/2, per/2, args=(n, self.wave_class.eval, 1))[0]
-            bI = (2/per)*spint.quad(bn, -per/2, per/2, args=(n, self.wave_class.eval, 0))[0]
+            aR = (2/per)*spint.quad(an, -per/2, per/2, args=(n, function, 0))[0]
+            aI = (2/per)*spint.quad(an, -per/2, per/2, args=(n, function, 1))[0]
+            bR = (2/per)*spint.quad(bn, -per/2, per/2, args=(n, function, 0))[0]
+            bI = (2/per)*spint.quad(bn, -per/2, per/2, args=(n, function, 1))[0]
             cR = (aR - complex('j')*bR)/2
             cI = (aI - complex('j')*bI)/2
             yield cR, cI

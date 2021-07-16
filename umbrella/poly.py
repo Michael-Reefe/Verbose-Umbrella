@@ -1,4 +1,4 @@
-from scipy.misc import derivative
+from umbrella.autodiff import *
 
 
 def factorial(n):
@@ -7,26 +7,60 @@ def factorial(n):
     return n*factorial(n-1)
 
 
-def legendreP(x, n):
+def fibonacci(n):
+    return 1/np.sqrt(5)*(((1 + np.sqrt(5))/2)**n - ((1 - np.sqrt(5))/2)**n)
+
+
+def choose(n, k):
+    return int(factorial(n)/(factorial(k)*factorial(n-k)))
+
+
+def gen_choose(a, k):
+    a0 = a
+    for i in range(1, k):
+        a *= a0 - i
+    return a / factorial(k)
+
+
+def _P(x, n):
+    if isinstance(x, np.ndarray):
+        raise ValueError("cannot evaluate entire array at once")
+    return 1/2**n * np.sum([choose(n, k)**2 * (x-1)**(n-k)*(x+1)**k for k in range(n+1)])
+
+
+def _autodiffP(x, n):
+    if isinstance(x, np.ndarray):
+        raise ValueError("cannot evaluate entire array at once")
+    x = Variable(x)
+    one = Variable(1.)
+    c = 1/(2**n)
+    s = Variable(0.)
+    for k in range(n):
+        x1 = Variable(1.)
+        x2 = Variable(1.)
+        for exp in range(n-k):
+            x1 *= (x - one)
+        for exp in range(k):
+            x2 *= (x + one)
+        s += Variable(c) * (Variable(choose(n, k))*Variable(choose(n, k)) * x1 * x2)
+    return x, s
+
+
+def legendreP(x, n, m=0):
     """
-    Calculate the legendre polynomial Pn of order n at the value x.
+    Calculate the associated Legendre function Pnm of order n, m at the value x.
 
     :param n: int, order of the polynomial
+    :param m: int, order of the associated function
     :param x: float, value to evaluate the function at.
-    :return: float, Pn(x)
+    :return: float, Pnm(x)
     """
-    if n == 0:
-        return 1
-    elif n == 1:
-        return x
-    else:
-        return ((2*n-1)*x*legendreP(x,n-1) - (n-1)*legendreP(x,n-2))/n
-
-
-def assoc_legendreP(x, m, n):
-    if m >= 0:
-        dPl = derivative(legendreP, x, dx=1e-10, n=m, args=(n,))
-        return (-1)**m*(1-x**2)**(m/2)*dPl
-    else:
-        return (-1)**m*factorial(n - m)/factorial(n + m)*legendreP(x, n)
+    if np.abs(m) > n:
+        raise ValueError("abs(m) must be smaller than n")
+    if m == 0:
+        return _P(x, n)
+    elif m < 0:
+        m = np.abs(m)
+        return (-1)**m * factorial(n - m)/factorial(n + m) * legendreP(x, n, m)
+    return (-1)**m * 2**n * (1 - x**2)**(m/2) * np.sum([factorial(k)/factorial(k-m) * x**(k-m) * gen_choose(n, k) * gen_choose((n+k-1)/2, n) for k in range(m, n+1)])
 
