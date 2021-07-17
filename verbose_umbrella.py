@@ -20,9 +20,12 @@ def build_fourier(type, rectify, amp, period, phase, velocity,
     return pchart
 
 
-def build_hydrogen(n, l, m, d):
-    _, _, _, _, fig, ax = poly.plot_hydrogen_3D(n, l, m, slice=d)
-    return fig, ax
+def build_hydrogen(n, l, m, d, type):
+    if type == "3D":
+        _, _, _, _, fig = poly.plot_hydrogen_3D(n, l, m, slice=d)
+    elif type == "2D":
+        _, _, _, _, fig = poly.plot_hydrogen(n, l, m)
+    return fig
 
 
 def fourier_frame():
@@ -54,9 +57,13 @@ def hydrogen_frame():
     n = st.number_input('n', 1, 100, 1, 1, "%d")
     l = st.number_input('l', 0, n-1, 0, 1, "%d")
     m = st.number_input('m', -l, l, 0, 1, "%d")
-    d = st.slider('Density cutoff (nm^-3)', 0., 1., 0.25, 0.001, "%.3f")
-    fig, ax = build_hydrogen(n, l, m, d)
-    st.pyplot(fig)
+    d = st.slider('Density cutoff (nm^-3)', 0., 5., 0.25, 0.001, "%.3f")
+    type = st.selectbox("Plot Type", ["2D", "3D"], 1)
+    fig = build_hydrogen(n, l, m, d, type)
+    if type == "3D":
+        st.plotly_chart(fig, use_container_width=True)
+    elif type == "2D":
+        st.pyplot(fig)
 
 
 def main():

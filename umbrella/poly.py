@@ -3,6 +3,10 @@ import mpl_toolkits.mplot3d.axes3d as axes3d
 import matplotlib.pyplot as plt
 from matplotlib.colors import LightSource
 from skimage import measure
+from plotly import graph_objects as pgo
+from plotly import subplots as psp
+import plotly.express as px
+import pandas as pd
 from scipy import ndimage
 
 
@@ -219,38 +223,38 @@ def plot_hydrogen(n=1, l=0, m=0, r=30, resolution=1, *args, **kwargs):
     density = np.abs(hydrogen_cartesian(X, y, Z, n, l, m))**2
     fig, ax = plt.subplots()
     ax.pcolor(X/a, Z/a, density, cmap='gnuplot', shading='nearest')
-    plt.show()
-    return X, y, Z, density
+    ax.set_xlabel("$x [a_B]$")
+    ax.set_ylabel("$y [a_B]$")
+    return X, y, Z, density, fig
 
 
-def plot_hydrogen_3D(n=1, l=0, m=0, r=20, slice=0.25, space=1e-5, resolution=1, save=False, *args, **kwargs):
+def plot_hydrogen_3D(n=1, l=0, m=0, r=20, slice=0.25, resolution=1, *args, **kwargs):
     # Bohr radius
     a = 0.529e-10
     assert type(n) is int
     assert type(l) is int
     assert type(m) is int
-    x = np.linspace(-r*a, r*a, 100*resolution)
-    y = np.linspace(-r*a, r*a, 100*resolution)
-    z = np.linspace(-r*a, r*a, 100*resolution)
-    X, Y, Z = np.meshgrid(x, y, z)
-    density = np.abs(hydrogen_cartesian(X, Y, Z, n, l, m))**2
-    # density = np.ma.masked_where((X > 15*a) & (Y > 15*a), density)
-    iso_val = slice/1e-27
-    density = np.where((X < 0) | (Y < 0), density, 0)
-    verts, faces, _, _ = measure.marching_cubes(density, iso_val, spacing=(space, space, space))
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    ax.plot_trisurf(verts[:, 0], verts[:, 1], faces, verts[:, 2], lw=1, antialiased=False, shade=True,
-                    lightsource=LightSource(azdeg=135, altdeg=45), *args, **kwargs)
-    ax.view_init(20, 20)
-    max_range = np.array([X.max() - X.min(), Y.max() - Y.min(), Z.max() - Z.min()]).max()
-    Xb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][0].flatten() + 0.5 * (X.max() + X.min())
-    Yb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][1].flatten() + 0.5 * (Y.max() + Y.min())
-    Zb = 0.5 * max_range * np.mgrid[-1:2:2, -1:2:2, -1:2:2][2].flatten() + 0.5 * (Z.max() + Z.min())
-    # Comment or uncomment following both lines to test the fake bounding box:
-    for xb, yb, zb in zip(Xb, Yb, Zb):
-        ax.plot([xb], [yb], [zb], 'w')
-    ax.set_axis_off()
-    if save:
-        plt.savefig('hydrogen_3D_{}{}{}.png'.format(n,l,m), dpi=600, bbox_inches='tight')
-    return X, Y, Z, density, fig, ax
+    # density = np.where((X < 0) | (Y < 0), density, 0)
+    while True:
+        x = np.linspace(-r * a, r * a, 100 * resolution)
+        y = np.linspace(-r * a, r * a, 100 * resolution)
+        z = np.linspace(-r * a, r * a, 100 * resolution)
+        X, Y, Z = np.meshgrid(x, y, z)
+        space = 2*r*a / (100*resolution)
+        density = np.abs(hydrogen_cartesian(X, Y, Z, n, l, m)) ** 2
+        iso_val = slice / 1e-27
+        try:
+            verts, faces, _, _ = measure.marching_cubes(density, iso_val, spacing=(space, space, space))
+            break
+        except ValueError:
+            r *= 2
+            continue
+    fig = pgo.Figure(data=[pgo.Mesh3d(x=verts[:, 0], y=verts[:, 1], z=verts[:, 2],
+                                      i=faces[:, 0], j=faces[:, 1], k=faces[:, 2],
+                                      opacity=0.5,
+                                      color='rgb(114,14,150)')], *args, **kwargs)
+    fig.update_layout(scene=dict(),
+        width=1000,
+        margin=dict(r=10, l=10, b=10, t=10)
+    )
+    return X, Y, Z, density, fig

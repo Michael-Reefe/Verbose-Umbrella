@@ -7,6 +7,7 @@ from numba import jit, njit
 import scipy.integrate as spint
 from matplotlib import pyplot as plt
 from matplotlib import animation
+from matplotlib.patches import Arrow
 
 
 class FourierSeries:
@@ -71,13 +72,11 @@ class FourierSeries:
         else:
             return x, y, coefficients, summation, fig
 
-    def complex_animate(self, timestamp=0, iterations=50, interval=(-np.pi, np.pi), resolution=1000,
-                        return_cumsum=False):
+    def complex_animate(self, timestamp=0, iterations=50, interval=(-np.pi, np.pi), resolution=1000):
         x = np.linspace(interval[0], interval[1], resolution)
         y = np.array([self.wave_class.eval(xi, timestamp) for xi in x])
         summation = np.zeros((len(x),), dtype=complex)
-        if return_cumsum:
-            cumsum = np.zeros((len(x), iterations), dtype=complex)
+        cumsum = np.zeros((len(x), iterations), dtype=complex)
         coefficients = np.zeros((iterations,), dtype=complex)
         generator = self.find_coefficients_complex(self.wave_class.period, self.wave_class.eval)
         for i in range(iterations):
@@ -90,13 +89,9 @@ class FourierSeries:
                 term = cn*np.exp(complex('j')*2*np.pi*i*x/self.wave_class.period) + \
                     cN*np.exp(-complex('j')*2*np.pi*i*x/self.wave_class.period)
             summation += term
-            if return_cumsum:
-                cumsum[:, i] = summation
-        anim = self._create_animation(y, summation)
-        if return_cumsum:
-            return x, y, coefficients, cumsum, anim
-        else:
-            return x, y, coefficients, summation, anim
+            cumsum[:, i] = summation
+        anim = self._create_animation(iterations, cumsum)
+        return x, y, coefficients, cumsum, anim
 
     @staticmethod
     def find_coefficients(period, function):
@@ -142,19 +137,32 @@ class FourierSeries:
             yield cR, cI
             n += 1
 
-    def _create_animation(self, inputarray, outputarray):
+    def _create_animation(self, i, outputarray):
         fig = plt.figure()
         ax = plt.axes(xlim=(np.nanmin(outputarray.real)-1, np.nanmax(outputarray.real)+1),
                       ylim=(np.nanmin(outputarray.imag)-1, np.nanmax(outputarray.imag)+1))
         # ax.plot(inputarray.real, inputarray.imag)
         function, = ax.plot([], [], lw=2)
+        arrows = []
 
         def init():
             function.set_data([], [])
+            for ii in range(i):
+                arrows.append(Arrow(0, 0, 0, 0))
+                ax.add_patch(arrows[ii])
             return function,
 
         def animate(n):
-            function.set_data(outputarray.real[:n:2], outputarray.imag[:n:2])
+            function.set_data(outputarray.real[:n:2, -1], outputarray.imag[:n:2, -1])
+            for ii in range(i):
+                arrows[ii].remove()
+            for ii in range(i):
+                if ii == 0:
+                    arrows[ii] = Arrow(0, 0, outputarray.real[n, 0], outputarray.imag[n, 1], color='k', lw=1)
+                else:
+                    arrows[ii] = Arrow(outputarray.real[n, ii-1], outputarray.imag[n, ii-1],
+                                        outputarray.real[n, ii], outputarray.imag[n, ii], color='k', lw=1)
+                ax.add_patch(arrows[ii])
             return function,
 
         anim = animation.FuncAnimation(fig, animate, init_func=init, frames=len(outputarray), blit=True,
