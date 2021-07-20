@@ -35,12 +35,12 @@ def fourier_frame():
     amp = st.slider('Amplitude', 0., 100., 1., 0.1, "%.1f")
     per = st.slider('Period (or Gaussian FWHM)', 0.01, 100., 2*np.pi, 0.01, "%.2f")
     phase = st.slider('Phase (or Gaussian Mean)', -np.pi, np.pi, 0., 0.01, "%.2f")
-    velocity = st.number_input('Velocity (v)', 0, 100, 0, 1, "%d")
+    velocity = st.number_input('Velocity (v)', int(0), int(100), int(0), int(1), "%d")
     rectify = st.checkbox('Rectify', False)
 
     st.markdown('## Fourier Series Options')
     ts = st.number_input('Draw Timestamp', 0., 100., 0., 0.1, "%.1f")
-    iters = st.number_input('Iterations', 1, 100, 10, 1, "%d")
+    iters = st.number_input('Iterations', int(1), int(100), int(10), int(1), "%d")
     cols = st.beta_columns(2)
     min = cols[0].number_input(label='Interval Min', value=-np.pi)
     max = cols[1].number_input(label='Interval Max', value=np.pi)
@@ -53,10 +53,10 @@ def fourier_frame():
 
 def hydrogen_frame():
     st.markdown('## Hydrogen Atom Options')
-    n = st.number_input('n', 1, 100, 1, 1, "%d")
-    l = st.number_input('l', 0, n-1, 0, 1, "%d")
-    m = st.number_input('m', -l, l, 0, 1, "%d")
-    d = st.slider('Density cutoff (nm^-3)', 0., 5., 0.25, 0.001, "%.3f")
+    n = st.number_input('n', int(1), int(100), int(1), int(1), "%d")
+    l = st.number_input('l', int(0), int(n-1), int(0), int(1), "%d")
+    m = st.number_input('m', int(-l), int(l), int(0), int(1), "%d")
+    d = st.slider('Density cutoff (nm^-3)', float(0.), float(5.), float(0.25), float(0.001), "%.3f")
     type = st.selectbox("Plot Type", ["2D", "3D"], 1)
     fig = build_hydrogen(n, l, m, d, type)
     if type == "3D":
