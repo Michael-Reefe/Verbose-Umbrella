@@ -102,9 +102,9 @@ def polar_plot_legendre(m=0, l=None, *args, **kwargs):
         ri = np.abs(legendre(np.cos(theta), li, m))
         r.append(ri)
         fig.add_trace(pgo.Scatterpolar(theta=theta*180/np.pi, r=ri, name='P<sub>%d</sub><sup>%d</sup>' % (li, m), *args, **kwargs))
-    fig.update_polars(dict(
-        radialaxis=dict(range=[0, 1])
-    ))
+    # fig.update_polars(dict(
+    #     radialaxis=dict(range=[0, 1])
+    # ))
     # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(l), fancybox=True)
     # plt.show()
     return theta, r, fig
