@@ -231,9 +231,9 @@ def plot_hydrogen(n=1, l=0, m=0, r=30, resolution=1, *args, **kwargs):
 def plot_hydrogen_3D(n=1, l=0, m=0, r=20, slice=0.25, resolution=1, *args, **kwargs):
     # Bohr radius
     a = 0.529e-10
-    assert type(n) is int
-    assert type(l) is int
-    assert type(m) is int
+    # assert type(n) is int
+    # assert type(l) is int
+    # assert type(m) is int
     # density = np.where((X < 0) | (Y < 0), density, 0)
     while True:
         x = np.linspace(-r * a, r * a, 100 * resolution)

@@ -53,9 +53,9 @@ def fourier_frame():
 
 def hydrogen_frame():
     st.markdown('## Hydrogen Atom Options')
-    n = st.number_input('n', int(1), int(100), int(1), int(1), "%d")
-    l = st.number_input('l', int(0), int(n-1), int(0), int(1), "%d")
-    m = st.number_input('m', -int(l), int(l), int(0), int(1), "%d")
+    n = st.number_input('n', 1, 100, 1, 1, "%d")
+    l = st.number_input('l', 0, n-1, 0, 1, "%d")
+    m = st.number_input('m', -l, l, 0, 1, "%d")
     d = st.slider('Density cutoff (nm^-3)', 0., 5., 0.25, 0.001, "%.3f")
     type = st.selectbox("Plot Type", ["2D", "3D"], 1)
     fig = build_hydrogen(n, l, m, d, type)
