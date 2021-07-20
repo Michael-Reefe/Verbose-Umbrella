@@ -76,73 +76,69 @@ def laguerre(x, q, p=0):
 
 
 def plot_legendre(m=0, l=None, *args, **kwargs):
-    assert type(m) is int
-    if not l:
+    # assert type(m) is int
+    if l is None:
         l = np.arange(np.abs(m), np.abs(m)+5, 1)
     x = np.linspace(-1, 1, 1000)
-    fig, ax = plt.subplots()
+    fig = psp.make_subplots(rows=1, cols=1)
     y = []
     for li in l:
-        yi = legendre(x, l, m)
+        yi = legendre(x, li, m)
         y.append(yi)
-        ax.plot(x, yi, label='$P_{%d}^{%d}$' % (li, m), *args, **kwargs)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(l), fancybox=True)
-    plt.show()
-    return x, y
+        fig.add_trace(pgo.Scatter(x=x, y=yi, name='P<sub>%d</sub><sup>%d</sup>' % (li, m), *args, **kwargs))
+    # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(l), fancybox=True)
+    # plt.show()
+    return x, y, fig
 
 
 def polar_plot_legendre(m=0, l=None, *args, **kwargs):
-    assert type(m) is int
-    if not l:
+    # assert type(m) is int
+    if l is None:
         l = np.arange(np.abs(m), np.abs(m)+5, 1)
     theta = np.linspace(-np.pi, np.pi, 1000)
-    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
-    ax.set_theta_offset(np.pi/2)
+    fig = psp.make_subplots(rows=1, cols=1)
     r = []
     for li in l:
         ri = np.abs(legendre(np.cos(theta), li, m))
         r.append(ri)
-        ax.plot(theta, ri, label='$P_{%d}^{%d}$' % (li, m), *args, **kwargs)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(l), fancybox=True)
-    plt.show()
-    return theta, r
+        fig.add_trace(pgo.Scatterpolar(theta=theta*180/np.pi, r=ri, name='P<sub>%d</sub><sup>%d</sup>' % (li, m), *args, **kwargs))
+    fig.update_polars(dict(
+        radialaxis=dict(range=[0, 1]), start_angle=90
+    ))
+    # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(l), fancybox=True)
+    # plt.show()
+    return theta, r, fig
 
 
-def plot_hermite(n=None, zoom=None, *args, **kwargs):
-    if not n:
+def plot_hermite(n=None, *args, **kwargs):
+    if n is None:
         n = np.arange(0, 5, 1)
     x = np.linspace(-3, 3, 1000)
-    fig, ax = plt.subplots()
+    fig = psp.make_subplots(rows=1, cols=1)
     y = []
     for ni in n:
         yi = hermite(x, ni)
         y.append(yi)
-        ax.plot(x, yi, label='$H_{%d}$' % ni, *args, **kwargs)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(n), fancybox=True)
-    if zoom:
-        ax.set_xlim(*zoom[0])
-        ax.set_ylim(*zoom[1])
-    plt.show()
-    return x, y
+        fig.add_trace(pgo.Scatter(x=x, y=yi, name=r'H<sub>%d</sub>' % ni, *args, **kwargs))
+    # ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(n), fancybox=True)
+    # if zoom:
+    #     ax.set_xlim(*zoom[0])
+    #     ax.set_ylim(*zoom[1])
+    # plt.show()
+    return x, y, fig
 
 
-def plot_laguerre(p=0, q=None, zoom=None, *args, **kwargs):
-    assert type(p) is int
-    if not q:
+def plot_laguerre(p=0, q=None, *args, **kwargs):
+    if q is None:
         q = np.arange(np.abs(p), np.abs(p)+5, 1)
     x = np.linspace(-2, 10, 1000)
-    fig, ax = plt.subplots()
+    fig = psp.make_subplots(rows=1, cols=1)
     y = []
     for qi in q:
         yi = laguerre(x, qi, p)
         y.append(yi)
-        ax.plot(x, yi, label='$L_{%d}^{%d}$' % (qi, p), *args, **kwargs)
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=len(q), fancybox=True)
-    if zoom:
-        ax.set_xlim(*zoom[0])
-        ax.set_ylim(*zoom[1])
-    plt.show()
-    return x, y
+        fig.add_trace(pgo.Scatter(x=x, y=yi, name=r'L<sub>%d</sub><sup>%d</sup>' % (qi, p), *args, **kwargs))
+    return x, y, fig
 
 
 def _harmonicY(theta, phi, l, m):
@@ -170,7 +166,7 @@ def harmonicY(theta, phi, l, m):
 
 
 def plot_harmonics(m=0, l=None, resolution=1, *args, **kwargs):
-    assert type(m) is int
+    # assert type(m) is int
     if not l:
         l = 0
     theta = np.linspace(0, np.pi, 100*resolution)
@@ -180,20 +176,22 @@ def plot_harmonics(m=0, l=None, resolution=1, *args, **kwargs):
     X = R * np.cos(PHI) * np.sin(THETA)
     Y = R * np.sin(PHI) * np.sin(THETA)
     Z = R * np.cos(THETA)
-    fig = plt.figure()
-    ax = fig.add_subplot(1,1,1, projection='3d')
-    ax.plot_surface(X, Y, Z, label='$Y_{%d}^{%d}$' % (l, m), rstride=1, cstride=1, cmap=plt.get_cmap('jet'),
-                    linewidth=0, antialiased=False, alpha=0.5, *args, **kwargs)
-    ax.set_xlabel('$x$')
-    ax.set_ylabel('$y$')
-    ax.set_zlabel('$z$')
-    ax.set_xlim(-.5,.5)
-    ax.set_ylim(-.5,.5)
-    ax.set_zlim(-.5,.5)
+    # fig = plt.figure()
+    # ax = fig.add_subplot(1,1,1, projection='3d')
+    # ax.plot_surface(X, Y, Z, label='$Y_{%d}^{%d}$' % (l, m), rstride=1, cstride=1, cmap=plt.get_cmap('jet'),
+    #                 linewidth=0, antialiased=False, alpha=0.5, *args, **kwargs)
+    # ax.set_xlabel('$x$')
+    # ax.set_ylabel('$y$')
+    # ax.set_zlabel('$z$')
+    # ax.set_xlim(-.5,.5)
+    # ax.set_ylim(-.5,.5)
+    # ax.set_zlim(-.5,.5)
     # ax.legend()
-    ax.view_init(30, 45)
-    plt.show()
-    return X, Y, Z
+    # ax.view_init(30, 45)
+    # plt.show()
+    fig = psp.make_subplots(rows=1, cols=1, specs=[[{'is_3d': True}]])
+    fig.add_trace(pgo.Surface(x=X, y=Y, z=Z, opacity=0.5, name=r'Y<sub>%d</sub><sup>%d</sup>' % (l, m)), 1, 1)
+    return X, Y, Z, fig
 
 
 def hydrogen(r, theta, phi, n, l, m):
