@@ -57,8 +57,8 @@ def hydrogen_frame():
     l = st.number_input('l', int(0), int(n-1), int(0), int(1), "%d")
     m = st.number_input('m', int(-l), int(l), int(0), int(1), "%d")
     d = st.slider('Density cutoff (nm^-3)', float(0.), float(5.), float(0.25), float(0.001), "%.3f")
-    print(n, l, m, d)
     type = st.selectbox("Plot Type", ["2D", "3D"], 1)
+    st.latex('\\bigg|\\psi_{%d %d %d}\\bigg|^2' % (n, l, m))
     fig = build_hydrogen(n, l, m, d, type)
     if type == "3D":
         st.plotly_chart(fig, use_container_width=True)
