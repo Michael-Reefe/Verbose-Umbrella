@@ -69,6 +69,7 @@ def hydrogen_frame():
 def main():
     # Create Titles
     st.title('Verbose Umbrella: ')
+    st.markdown('Hi, I\'m Michael.  I decided to make this for fun.  Don\'t ask why.  Hope you like it!')
     st.markdown('# Create a Fourier Series:')
     st.latex(r'\hat{f}(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}a_n\cos\bigg(\frac{2\pi n}{P}x\bigg) + '
              r'\sum_{n=1}^{\infty}b_n\sin\bigg(\frac{2\pi n}{P}x\bigg)')
