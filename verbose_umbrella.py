@@ -105,7 +105,7 @@ def bessel_frame():
         st.latex(r'j_\ell(x) = (-1)^\ell x^\ell \bigg(\frac{1}{x}\frac{d}{dx}\bigg)^\ell \bigg(\frac{\sin(x)}{x}\bigg)')
         st.markdown('## Bessel Options')
         collect_nums = lambda x: [int(i) for i in re.split("[^0-9]", x) if i != ""]
-        filter_nums = lambda _list: [item for item in _list if (0 <= item <= 5)]
+        filter_nums = lambda _list: [item for item in _list if (0 <= item <= 4)]
         nums = st.text_input("l [type any number of values to plot]  ", "0, 1, 2, 3, 4")
         lB = filter_nums(collect_nums(nums))
         fig = build_bessel(lB)
