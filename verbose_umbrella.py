@@ -36,6 +36,11 @@ def build_legendre(l, m, type):
     return fig
 
 
+def build_bessel(l):
+    _, _, fig = poly.plot_bessel(l)
+    return fig
+
+
 def build_hermite(n):
     _, _, fig = poly.plot_hermite(n)
     return fig
@@ -92,6 +97,18 @@ def legendre_frame():
         mP = st.number_input('m ', int(-min(lP)), int(min(lP)), int(0), int(1), "%d")
         type = st.selectbox("Plot Type", ["Cartesian (x)", "Polar (cos x)"], 0)
         fig = build_legendre(lP, mP, type)
+        st.plotly_chart(fig, use_container_width=True)
+
+
+def bessel_frame():
+    with st.beta_expander("Look at Spherical Bessel Functions"):
+        st.latex(r'j_\ell(x) = (-1)^\ell x^\ell \bigg(\frac{1}{x}\frac{d}{dx}\bigg)^\ell \bigg(\frac{\sin(x)}{x}\bigg)')
+        st.markdown('## Bessel Options')
+        collect_nums = lambda x: [int(i) for i in re.split("[^0-9]", x) if i != ""]
+        filter_nums = lambda _list: [item for item in _list if (0 <= item <= 5)]
+        nums = st.text_input("l [type any number of values to plot]  ", "0, 1, 2, 3, 4")
+        lB = filter_nums(collect_nums(nums))
+        fig = build_bessel(lB)
         st.plotly_chart(fig, use_container_width=True)
 
 
@@ -157,6 +174,7 @@ def main():
     st.markdown('Hi, I\'m Michael.  I decided to make this for fun.  Don\'t ask why.  Hope you like it!')
     fourier_frame()
     legendre_frame()
+    bessel_frame()
     hermite_frame()
     laguerre_frame()
     harmonic_frame()

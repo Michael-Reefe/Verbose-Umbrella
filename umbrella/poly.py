@@ -11,49 +11,66 @@ from scipy import ndimage
 
 
 def factorial(n):
-    if n == 0:
-        return 1
-    return n*factorial(n-1)
+    """
+    Calculate the factorial of integer n.
+    :param n: int
+        number to caluclate factorial for
+    :return: int
+        n! = n*(n-1)*(n-2)*...*1
+    """
+    assert n >= 0
+    return int(np.prod([i for i in range(1, n+1)]))
 
 
 def fibonacci(n):
+    """
+    Calculate the nth fibonacci number.
+    :param n: int
+        index of fibonacci sequence
+    :return: int
+        fibonacci number of order n.
+    """
     return 1/np.sqrt(5)*(((1 + np.sqrt(5))/2)**n - ((1 - np.sqrt(5))/2)**n)
 
 
 def choose(n, k):
+    """
+    Calculate the generalized binomial coefficient between n and k, also known as
+    "n choose k".
+    :param n: int
+    :param k: int
+    :return:
+        ( n
+          k )
+    """
     return np.prod([(n+1-i)/i for i in range(1, k+1)])
 
 
 def _P(x, l):
+    """
+    Calculate the Legendre Polynomial of order l at the value x.
+    :param x: float
+        number to calculate function at
+    :param l: int
+        order of polynomial
+    :return:
+        P_l(x)
+    """
     return sum([choose(l, k) * choose(-l-1, k) * np.power((1-x)/2, k) for k in range(l+1)])
-
-def _autodifferentiableP(x, l):
-    s = np.array([])
-    for xi in x:
-        x = Variable(xi)
-        one = Variable(1.)
-        c = 1/(2 ** l)
-        si = Variable(0.)
-        for k in range(l):
-            x1 = Variable(1.)
-            x2 = Variable(1.)
-            for exp in range(l - k):
-                x1 *= (x - one)
-            for exp in range(k):
-                x2 *= (x + one)
-            si += Variable(c) * (Variable(choose(l, k)) * Variable(choose(l, k)) * x1 * x2)
-        np.append(s, si)
-    return x, s
 
 
 def legendre(x, l, m=0):
     """
-    Calculate the associated Legendre function Pnm of order n, m at the value x.
+    Calculate the associated Legendre function Plm of order l, m at the value x.
 
-    :param l: int, order of the polynomial
-    :param m: int, order of the associated function
-    :param x: float, value to evaluate the function at.
-    :return: float, Pnm(x)
+    :param l: int
+        order of the polynomial
+    :param m: int
+        order of the associated function
+    :param x: float
+        value to evaluate the function at.
+    :return: float
+        P_l^m(x)
     """
     if np.abs(m) > l:
         raise ValueError("abs(m) must be smaller than n")
@@ -64,15 +81,57 @@ def legendre(x, l, m=0):
 
 
 def hermite(x, n):
+    """
+    Calculate the Hermite Polynomial of order n at the value x.
+    :param x: float
+        number to calculate function at
+    :param n: int
+        order of polynomial
+    :return: float
+        H_n(x)
+    """
     return factorial(n) * sum([(-1)**m/(factorial(m)*factorial(n-2*m)) * (2*x)**(n-2*m) for m in range(n//2+1)])
 
 
 def _L(x, q):
+    """
+    Calculate the Laguerre Polynomial of order q at the value x.
+    :param x: float
+        number to calculate function at
+    :param q: int
+        order of polynomial
+    :return: float
+        L_q(x)
+    """
     return sum([(-1)**k/factorial(k) * choose(q, k) * x**k for k in range(q+1)])
 
 
 def laguerre(x, q, p=0):
+    """
+    Calculate the Associated Legendre Polynomial of order q, p at the value x.
+    :param x: float
+        number to calculate function at
+    :param q: int
+        order of polynomial
+    :param: p, int
+        order of the associated function
+    :return: float
+        L_q^p(x)
+    """
     return sum([(-1)**m * factorial(q+p)/(factorial(q-m)*factorial(p+m)*factorial(m)) * x**m for m in range(q+1)])
+
+
+def _autodiff_sphbess(x, l):
+    negone = Variable(-1)
+    if l.value == 0:
+        return sin(x)/x
+    else:
+        di = get_gradients(x ** (negone * (l+negone)) * _autodiff_sphbess(x, l+negone))
+        return negone*x**(l+negone)*di[x]
+
+
+def spherical_bessel(x, l):
+    return _autodiff_sphbess(Variable(x), Variable(l)).value
 
 
 def plot_legendre(m=0, l=None, *args, **kwargs):
@@ -138,6 +197,19 @@ def plot_laguerre(p=0, q=None, *args, **kwargs):
         yi = laguerre(x, qi, p)
         y.append(yi)
         fig.add_trace(pgo.Scatter(x=x, y=yi, name=r'L<sub>%d</sub><sup>%d</sup>' % (qi, p), *args, **kwargs))
+    return x, y, fig
+
+
+def plot_bessel(l=None, *args, **kwargs):
+    if l is None:
+        l = np.arange(0, 5, 1)
+    x = np.linspace(1e-2, 20, 1000)
+    fig = psp.make_subplots(rows=1, cols=1)
+    y = []
+    for li in l:
+        yi = spherical_bessel(x, li)
+        y.append(yi)
+        fig.add_trace(pgo.Scatter(x=x, y=yi, name=r'j<sub>%d</sub>' % li, *args, **kwargs))
     return x, y, fig
 
 

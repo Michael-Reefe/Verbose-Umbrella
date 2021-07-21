@@ -21,8 +21,8 @@ class Variable:
     def __truediv__(self, other):
         return div(self, other)
 
-    # def __pow__(self, other):
-    #     return pow(self, other)
+    def __pow__(self, other):
+        return pow(self, other)
 
 
 ONE = Variable(1.)
@@ -56,13 +56,13 @@ def div(a, b):
     return Variable(value, local_gradients)
 
 
-# def pow(a, b):
-#     value = np.power(a.value, b.value)
-#     local_gradients = (
-#         (a, lambda path_value: path_value * b * pow(a, b-ONE)),
-#         (b, lambda path_value: path_value * log(a)*pow(a, b))
-#     )
-#     return Variable(value, local_gradients)
+def pow(a, b):
+    value = np.power(a.value, b.value)
+    local_gradients = (
+        (a, lambda path_value: path_value * b * pow(a, b-ONE)),
+        (b, lambda path_value: path_value * log(a)*pow(a, b))
+    )
+    return Variable(value, local_gradients)
 
 
 def neg(a):
@@ -77,6 +77,22 @@ def log(a):
     value = np.log(a.value)
     local_gradients = (
         (a, lambda path_value: path_value * ONE/a),
+    )
+    return Variable(value, local_gradients)
+
+
+def sin(a):
+    value = np.sin(a.value)
+    local_gradients = (
+        (a, lambda path_value: path_value * cos(a)),
+    )
+    return Variable(value, local_gradients)
+
+
+def cos(a):
+    value = np.cos(a.value)
+    local_gradients = (
+        (a, lambda path_value: path_value * neg(sin(a))),
     )
     return Variable(value, local_gradients)
 
