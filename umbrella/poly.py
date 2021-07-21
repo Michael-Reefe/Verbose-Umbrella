@@ -6,6 +6,7 @@ from skimage import measure
 from plotly import graph_objects as pgo
 from plotly import subplots as psp
 import plotly.express as px
+import math
 import pandas as pd
 from scipy import ndimage
 
@@ -19,7 +20,7 @@ def factorial(n):
         n! = n*(n-1)*(n-2)*...*1
     """
     assert n >= 0
-    return int(np.prod([i for i in range(1, n+1)]))
+    return np.prod([i for i in range(1, n+1)])
 
 
 def fibonacci(n):
@@ -121,17 +122,21 @@ def laguerre(x, q, p=0):
     return sum([(-1)**m * factorial(q+p)/(factorial(q-m)*factorial(p+m)*factorial(m)) * x**m for m in range(q+1)])
 
 
-def _autodiff_sphbess(x, l):
-    negone = Variable(-1)
-    if l.value == 0:
-        return sin(x)/x
-    else:
-        di = get_gradients(x ** (negone * (l+negone)) * _autodiff_sphbess(x, l+negone))
-        return negone*x**(l+negone)*di[x]
+def bessel(x, l):
+    gamma = lambda x: np.inf if (x == 0 or ((x < 0) and (x % 1 == 0))) else math.gamma(x)
+    return sum([(-1)**m / (math.factorial(m) * gamma(m+l+1)) * (x/2)**(2*m+l) for m in range(100)])
+
+
+def neumann(x, l):
+    return (bessel(x, l)*np.cos(l*np.pi) - bessel(x, -l)) / np.sin(l*np.pi)
 
 
 def spherical_bessel(x, l):
-    return _autodiff_sphbess(Variable(x), Variable(l)).value
+    return np.sqrt(np.pi/(2*x))*bessel(x, l+1/2)
+
+
+def spherical_neumann(x, l):
+    return np.sqrt(np.pi/(2*x))*neumann(x, l+1/2)
 
 
 def plot_legendre(m=0, l=None, *args, **kwargs):
@@ -200,16 +205,20 @@ def plot_laguerre(p=0, q=None, *args, **kwargs):
     return x, y, fig
 
 
-def plot_bessel(l=None, *args, **kwargs):
+def plot_bessel(l=None, type='Bessel', *args, **kwargs):
     if l is None:
         l = np.arange(0, 5, 1)
     x = np.linspace(1e-2, 20, 1000)
     fig = psp.make_subplots(rows=1, cols=1)
     y = []
+    types = {"Bessel": bessel, "Neumann": neumann, "Spherical Bessel": spherical_bessel, "Spherical Neumann": spherical_neumann}
+    legend = {"Bessel": "J", "Neumann": "N", "Spherical Bessel": "j", "Spherical Neumann": "n"}
     for li in l:
-        yi = spherical_bessel(x, li)
+        yi = types[type](x, li)
         y.append(yi)
-        fig.add_trace(pgo.Scatter(x=x, y=yi, name=r'j<sub>%d</sub>' % li, *args, **kwargs))
+        fig.add_trace(pgo.Scatter(x=x, y=yi, name=legend[type] + r'<sub>%d</sub>' % li, *args, **kwargs))
+    if type in ["Neumann", "Spherical Neumann"]:
+        fig.update_layout(yaxis_range=[-3,0.5])
     return x, y, fig
 
 
