@@ -89,6 +89,7 @@ def legendre_frame():
         # st.markdown('# Look at Associated Legendre Functions:')
         st.latex(r'P_{\ell}(x) = \frac{1}{2^\ell \ell!}\frac{d^\ell}{dx^\ell}(x^2-1)^\ell')
         st.latex(r'P_{\ell}^m(x) = (-1)^m(1-x^2)^{m/2}\frac{d^m}{dx^m}P_{\ell}(x);\ \ P_{\ell}^{-m}(x) = (-1)^m\frac{(\ell - m)!}{(\ell+m)!}P_{\ell}^{m}(x)')
+        st.latex(r'\ell \in \mathbb{N}_0 \ \ \ \ \ m \in \{-\ell,-\ell+1,...,\ell-1, \ell\}')
         st.markdown('## Legendre Options')
         collect_nums = lambda x: [int(i) for i in re.split("[^0-9]", x) if i != ""]
         filter_nums = lambda _list: [item for item in _list if (0 <= item <= 100)]
@@ -102,10 +103,9 @@ def legendre_frame():
 
 def bessel_frame():
     with st.beta_expander("Look at Bessel Functions"):
-        st.latex(r'J_\ell(x) = \sum_{m=0}^{\infty} \frac{(-1)^m}{m! \Gamma(m+\ell+1)}\bigg(\frac{x}{2}\bigg)^{2m+\ell}')
-        st.latex(r'N_\ell(x) = \frac{J_\ell(x)\cos(\ell \pi) - J_{-\ell}(x)}{\sin(\ell\pi)}')
         st.latex(r'j_\ell(x) = (-x)^\ell \bigg(\frac{1}{x}\frac{d}{dx}\bigg)^\ell \frac{\sin(x)}{x}')
         st.latex(r'n_\ell(x) = -(-x)^\ell \bigg(\frac{1}{x}\frac{d}{dx}\bigg)^\ell \frac{\cos(x)}{x}')
+        st.latex(r'\ell \in \mathbb{N}_0')
         st.markdown('## Bessel Options')
         collect_nums = lambda x: [int(i) for i in re.split("[^0-9]", x) if i != ""]
         filter_nums = lambda _list: [item for item in _list if (0 <= item <= 70)]
@@ -119,6 +119,7 @@ def bessel_frame():
 def hermite_frame():
     with st.beta_expander("Look at Hermite Polynomials"):
         st.latex(r'H_n(x) = (-1)^n e^{x^2} \frac{d^n}{dx^n}e^{-x^2}')
+        st.latex(r'n \in \mathbb{N}_0')
         st.markdown('## Hermite Options')
         collect_nums = lambda x: [int(i) for i in re.split("[^0-9]", x) if i != ""]
         filter_nums = lambda _list: [item for item in _list if (0 <= item <= 100)]
@@ -132,6 +133,7 @@ def laguerre_frame():
     with st.beta_expander("Look at Associated Laguerre Functions"):
         st.latex(r'L_q^p(x) = (-1)^p \frac{d^p}{dx^p}L_{p+q}(x)')
         st.latex(r'L_q(x) = \frac{e^x}{q!}\frac{d^q}{dx^q}(e^{-x}x^q)')
+        st.latex(r'q \in \mathbb{N}_0 \ \ \ \ \ p \in \{0,1,...,q\}')
         st.markdown('## Laguerre Options')
         collect_nums = lambda x: [int(i) for i in re.split("[^0-9]", x) if i != ""]
         filter_nums = lambda _list: [item for item in _list if (0 <= item <= 100)]
@@ -146,6 +148,7 @@ def harmonic_frame():
     with st.beta_expander("Look at Spherical Harmonics"):
         st.latex('Y_\ell^m(\\theta, \\phi) = \sqrt{\\frac{(2\ell + 1)}{4\pi}\\frac{(\ell - m)!}{(\ell + m)!}}'
                  'e^{im\phi}P_\ell^m(\cos\\theta)')
+        st.latex(r'\ell \in \mathbb{N}_0 \ \ \ \ \ m \in \{-\ell,-\ell+1,...,\ell-1, \ell\}')
         st.markdown('## Harmonic Options')
         lH = st.number_input("l  ", int(0), int(100), int(0), int(1), "%d")
         mH = st.number_input("m  ", int(-lH), int(lH), int(0), int(1), "%d")
@@ -158,6 +161,7 @@ def hydrogen_frame():
         # st.markdown('# Look at Hydrogen Atom Orbitals:')
         st.latex(r'\psi_{n \ell m} = \sqrt{\bigg(\frac{2}{na}\bigg)^3 \frac{(n-\ell-1)!}{2n(n+\ell)!}} '
                  r'e^{-r/na}\bigg(\frac{2r}{na}\bigg)^{\ell}\bigg[L^{2\ell+1}_{n-\ell-1}(2r/na)\bigg]Y_{\ell}^m(\theta, \phi)')
+        st.latex(r'n \in \mathbb{Z}^+ \ \ \ \ \ \ell \in \{0,1,...,n-1\} \ \ \ \ \ m \in \{-\ell,-\ell+1,...,\ell-1,\ell\}')
         st.markdown('## Hydrogen Atom Options')
         n = st.number_input('n', int(1), int(100), int(1), int(1), "%d")
         l = st.number_input('l', int(0), int(n-1), int(0), int(1), "%d")
@@ -175,7 +179,6 @@ def hydrogen_frame():
 def main():
     # Create Titles
     st.title('Verbose Umbrella: ')
-    st.markdown('Hi, I\'m Michael.  I decided to make this for fun.  Don\'t ask why.  Hope you like it!')
     fourier_frame()
     legendre_frame()
     bessel_frame()
@@ -183,7 +186,8 @@ def main():
     laguerre_frame()
     harmonic_frame()
     hydrogen_frame()
-
+    st.write(r'$\mathbb{N}_0 \text{ is shorthand for non-negative integers, i.e. the set } \{0,1,2,...\}$')
+    st.write(r'$\mathbb{Z}^+ \text{ is shorthand for positive integers, i.e. the set } \{1,2,...\}$')
 
 if __name__ == '__main__':
     main()
