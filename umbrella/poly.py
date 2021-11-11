@@ -78,7 +78,7 @@ def legendre(x, l, m=0):
     if m < 0:
         m = np.abs(m)
         return (-1) ** m * factorial(int(l - m)) / factorial(int(l + m)) * legendre(x, l, m)
-    return (-1)**m * 2**l * (1 - x**2)**(m / 2) * sum([factorial(k)/factorial(k - m) * x**(k - m) * choose(l, k) * choose((l + k - 1) / 2, l) for k in range(m, l + 1)])
+    return (-1)**m * 2**l * (1 - x**2)**(m / 2) * sum([factorial(int(k))/factorial(int(k - m)) * x**(k - m) * choose(l, k) * choose((l + k - 1) / 2, l) for k in range(m, l + 1)])
 
 
 def hermite(x, n):
