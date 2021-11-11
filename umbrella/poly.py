@@ -19,7 +19,7 @@ def factorial(n):
     :return: int
         n! = n*(n-1)*(n-2)*...*1
     """
-    assert n >= 0
+    assert n >= 0 and type(n) is int
     return np.prod([i for i in range(1, n+1)])
 
 
