@@ -30,24 +30,24 @@ def build_hydrogen(n, l, m, d, type):
 
 def build_legendre(l, m, type):
     if type == "Cartesian (x)":
-        _, _, fig = poly.plot_legendre(int(m), int(l))
+        _, _, fig = poly.plot_legendre(int(m), [int(li) for li in l])
     elif type == "Polar (cos x)":
-        _, _, fig = poly.polar_plot_legendre(int(m), int(l))
+        _, _, fig = poly.polar_plot_legendre(int(m), [int(li) for li in l])
     return fig
 
 
 def build_bessel(l, type):
-    _, _, fig = poly.plot_bessel(int(l), type)
+    _, _, fig = poly.plot_bessel([int(li) for li in l], type)
     return fig
 
 
 def build_hermite(n):
-    _, _, fig = poly.plot_hermite(int(n))
+    _, _, fig = poly.plot_hermite([int(ni) for ni in n])
     return fig
 
 
 def build_laguerre(q, p):
-    _, _, fig = poly.plot_laguerre(int(p), int(q))
+    _, _, fig = poly.plot_laguerre(int(p), [int(qi) for qi in q])
     return fig
 
 
