@@ -237,12 +237,12 @@ def harmonicY(theta, phi, l, m):
     :return: float, Ylm(theta, phi)
     """
     if m < 0:
-        return (-1) ** m * np.sqrt(2) * np.sqrt((2*l+1)/(4*np.pi)*factorial(l-np.abs(m))/factorial(l+np.abs(m))) \
+        return (-1) ** m * np.sqrt(2) * np.sqrt((2*l+1)/(4*np.pi)*factorial(int(l-np.abs(m)))/factorial(int(l+np.abs(m)))) \
                * legendre(np.cos(theta), l, np.abs(m)) * np.sin(np.abs(m) * phi)
     elif m == 0:
         return np.sqrt((2*l+1)/(4*np.pi)) * legendre(np.cos(theta), l, m)
     else:
-        return (-1) ** m * np.sqrt(2) * np.sqrt((2*l+1)/(4*np.pi)*factorial(l-np.abs(m))/factorial(l+np.abs(m))) \
+        return (-1) ** m * np.sqrt(2) * np.sqrt((2*l+1)/(4*np.pi)*factorial(int(l-np.abs(m)))/factorial(int(l+np.abs(m)))) \
                * legendre(np.cos(theta), l, m) * np.cos(m * phi)
 
 
