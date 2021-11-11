@@ -278,8 +278,8 @@ def plot_harmonics(m=0, l=None, resolution=1, *args, **kwargs):
 def hydrogen(r, theta, phi, n, l, m):
     # Bohr radius
     a = 0.529e-10
-    return np.sqrt((2/(n*a))**3 * factorial(n-l-1)/(2*n*factorial(n+l))) \
-        * np.exp(-r/(n*a)) * (2*r/(n*a))**l * laguerre(2*r/(n*a), n-l-1, 2*l+1) * _harmonicY(theta, phi, l, m)
+    return np.sqrt((2/(n*a))**3 * factorial(int(n-l-1))/(2*n*factorial(int(n+l)))) \
+        * np.exp(-r/(n*a)) * (2*r/(n*a))**l * laguerre(2*r/(n*a), int(n-l-1), int(2*l+1)) * _harmonicY(theta, phi, int(l), int(m))
 
 
 def hydrogen_cartesian(x, y, z, n, l, m):
