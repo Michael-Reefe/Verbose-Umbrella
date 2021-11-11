@@ -238,7 +238,7 @@ def harmonicY(theta, phi, l, m):
     """
     if m < 0:
         return (-1) ** m * np.sqrt(2) * np.sqrt((2*l+1)/(4*np.pi)*factorial(int(l-np.abs(m)))/factorial(int(l+np.abs(m)))) \
-               * legendre(np.cos(theta), l, np.abs(m)) * np.sin(np.abs(m) * phi)
+               * legendre(np.cos(theta), l, int(np.abs(m))) * np.sin(np.abs(m) * phi)
     elif m == 0:
         return np.sqrt((2*l+1)/(4*np.pi)) * legendre(np.cos(theta), l, m)
     else:
