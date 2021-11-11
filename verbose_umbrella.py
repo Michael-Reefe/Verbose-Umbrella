@@ -16,7 +16,7 @@ def build_fourier(type, rectify, amp, period, phase, velocity,
         type += 'Rect'
     function = eval(f'w.{type}({amp}, {period}, {phase}, {velocity})')
     fs = FourierSeries(function)
-    _, _, _, _, pchart = fs.integrate(timestamp, iterations, interval, resolution)
+    _, _, _, _, pchart = fs.integrate(timestamp, int(iterations), interval, int(resolution))
     return pchart
 
 
@@ -30,29 +30,29 @@ def build_hydrogen(n, l, m, d, type):
 
 def build_legendre(l, m, type):
     if type == "Cartesian (x)":
-        _, _, fig = poly.plot_legendre(int(m), l)
+        _, _, fig = poly.plot_legendre(int(m), int(l))
     elif type == "Polar (cos x)":
-        _, _, fig = poly.polar_plot_legendre(int(m), l)
+        _, _, fig = poly.polar_plot_legendre(int(m), int(l))
     return fig
 
 
 def build_bessel(l, type):
-    _, _, fig = poly.plot_bessel(l, type)
+    _, _, fig = poly.plot_bessel(int(l), type)
     return fig
 
 
 def build_hermite(n):
-    _, _, fig = poly.plot_hermite(n)
+    _, _, fig = poly.plot_hermite(int(n))
     return fig
 
 
 def build_laguerre(q, p):
-    _, _, fig = poly.plot_laguerre(p, q)
+    _, _, fig = poly.plot_laguerre(int(p), int(q))
     return fig
 
 
 def build_harmonic(l, m):
-    _, _, _, fig = poly.plot_harmonics(m, l)
+    _, _, _, fig = poly.plot_harmonics(int(m), int(l))
     return fig
 
 
@@ -78,7 +78,7 @@ def fourier_frame():
         min = cols[0].number_input(label='Interval Min', value=-np.pi)
         max = cols[1].number_input(label='Interval Max', value=np.pi)
         interval = (min, max)
-        res = int(st.number_input(label='Resolution', value=1000))
+        res = st.number_input(label='Resolution', value=1000)
 
         pchart = build_fourier(type, rectify, amp, per, phase, velocity, ts, iters, interval, res)
         st.plotly_chart(pchart, use_container_width=True)
