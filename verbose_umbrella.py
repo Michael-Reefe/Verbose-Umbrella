@@ -57,7 +57,7 @@ def build_harmonic(l, m):
 
 
 def fourier_frame():
-    with st.beta_expander("Create a Fourier Series"):
+    with st.expander("Create a Fourier Series"):
         # st.markdown('# Create a Fourier Series:')
         st.latex(r'\hat{f}(x) = \frac{a_0}{2} + \sum_{n=1}^{\infty}a_n\cos\bigg(\frac{2\pi n}{P}x\bigg) + '
                  r'\sum_{n=1}^{\infty}b_n\sin\bigg(\frac{2\pi n}{P}x\bigg)')
@@ -74,18 +74,18 @@ def fourier_frame():
         st.markdown('## Fourier Series Options')
         ts = st.number_input('Draw Timestamp', 0., 100., 0., 0.1, "%.1f")
         iters = st.number_input('Iterations', int(1), int(100), int(10), int(1), "%d")
-        cols = st.beta_columns(2)
+        cols = st.columns(2)
         min = cols[0].number_input(label='Interval Min', value=-np.pi)
         max = cols[1].number_input(label='Interval Max', value=np.pi)
         interval = (min, max)
-        res = st.number_input(label='Resolution', value=1000)
+        res = int(st.number_input(label='Resolution', value=1000))
 
         pchart = build_fourier(type, rectify, amp, per, phase, velocity, ts, iters, interval, res)
         st.plotly_chart(pchart, use_container_width=True)
 
 
 def legendre_frame():
-    with st.beta_expander("Look at Associated Legendre Functions"):
+    with st.expander("Look at Associated Legendre Functions"):
         # st.markdown('# Look at Associated Legendre Functions:')
         st.latex(r'P_{\ell}(x) = \frac{1}{2^\ell \ell!}\frac{d^\ell}{dx^\ell}(x^2-1)^\ell')
         st.latex(r'P_{\ell}^m(x) = (-1)^m(1-x^2)^{m/2}\frac{d^m}{dx^m}P_{\ell}(x);\ \ P_{\ell}^{-m}(x) = (-1)^m\frac{(\ell - m)!}{(\ell+m)!}P_{\ell}^{m}(x)')
@@ -102,7 +102,7 @@ def legendre_frame():
 
 
 def bessel_frame():
-    with st.beta_expander("Look at Bessel Functions"):
+    with st.expander("Look at Bessel Functions"):
         st.latex(r'j_\ell(x) = (-x)^\ell \bigg(\frac{1}{x}\frac{d}{dx}\bigg)^\ell \frac{\sin(x)}{x}')
         st.latex(r'n_\ell(x) = -(-x)^\ell \bigg(\frac{1}{x}\frac{d}{dx}\bigg)^\ell \frac{\cos(x)}{x}')
         st.latex(r'\ell \in \mathbb{N}_0')
@@ -117,7 +117,7 @@ def bessel_frame():
 
 
 def hermite_frame():
-    with st.beta_expander("Look at Hermite Polynomials"):
+    with st.expander("Look at Hermite Polynomials"):
         st.latex(r'H_n(x) = (-1)^n e^{x^2} \frac{d^n}{dx^n}e^{-x^2}')
         st.latex(r'n \in \mathbb{N}_0')
         st.markdown('## Hermite Options')
@@ -130,7 +130,7 @@ def hermite_frame():
 
 
 def laguerre_frame():
-    with st.beta_expander("Look at Associated Laguerre Functions"):
+    with st.expander("Look at Associated Laguerre Functions"):
         st.latex(r'L_q^p(x) = (-1)^p \frac{d^p}{dx^p}L_{p+q}(x)')
         st.latex(r'L_q(x) = \frac{e^x}{q!}\frac{d^q}{dx^q}(e^{-x}x^q)')
         st.latex(r'q \in \mathbb{N}_0 \ \ \ \ \ p \in \{0,1,...,q\}')
@@ -145,7 +145,7 @@ def laguerre_frame():
 
 
 def harmonic_frame():
-    with st.beta_expander("Look at Spherical Harmonics"):
+    with st.expander("Look at Spherical Harmonics"):
         st.latex('Y_\ell^m(\\theta, \\phi) = \sqrt{\\frac{(2\ell + 1)}{4\pi}\\frac{(\ell - m)!}{(\ell + m)!}}'
                  'e^{im\phi}P_\ell^m(\cos\\theta)')
         st.latex(r'\ell \in \mathbb{N}_0 \ \ \ \ \ m \in \{-\ell,-\ell+1,...,\ell-1, \ell\}')
@@ -157,7 +157,7 @@ def harmonic_frame():
 
 
 def hydrogen_frame():
-    with st.beta_expander("Look at Hydrogen Atom Orbitals"):
+    with st.expander("Look at Hydrogen Atom Orbitals"):
         # st.markdown('# Look at Hydrogen Atom Orbitals:')
         st.latex(r'\psi_{n \ell m} = \sqrt{\bigg(\frac{2}{na}\bigg)^3 \frac{(n-\ell-1)!}{2n(n+\ell)!}} '
                  r'e^{-r/na}\bigg(\frac{2r}{na}\bigg)^{\ell}\bigg[L^{2\ell+1}_{n-\ell-1}(2r/na)\bigg]Y_{\ell}^m(\theta, \phi)')
